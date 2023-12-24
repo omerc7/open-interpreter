@@ -22,7 +22,7 @@ class Python(SubprocessCodeInterpreter):
             self.__class__ = PythonVision
             self.__init__(config)
         else:
-            executable = sys.executable
+            executable = "/usr/local/bin/python"
             if os.name != "nt":  # not Windows
                 executable = shlex.quote(executable)
             self.start_cmd = executable + " -i -q -u"
