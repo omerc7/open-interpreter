@@ -232,6 +232,35 @@ def test_system_message_appending():
     ]
 
 
+def test_env_var_changed_python():
+    interpreter.chat("Does the env var MY_ENV_VAR exist? Use python script")
+    os.environ["MY_ENV_VAR"] = "test"
+    os.environ["MY_ENV_VAR_2"] = "test"
+    interpreter.chat("Does the env var MY_ENV_VAR exist? Use python script")
+
+
+def test_env_var_changed_bash():
+    interpreter.chat("Does the env var MY_ENV_VAR exist? Use bash script")
+    os.environ["MY_ENV_VAR"] = "test"
+    os.environ["MY_ENV_VAR_2"] = "test"
+    interpreter.chat("Does the env var MY_ENV_VAR exist? Use bash script")
+
+
+def test_aws_env_var_changed():
+    interpreter.chat("create a new dir called test, cd into it, and pwd")
+
+    interpreter.chat("execute aws sts get-caller-identity")
+
+    # TODO: set before executing the test
+    os.environ["AWS_ACCESS_KEY_ID"] = ""
+    os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+    os.environ["AWS_SESSION_TOKEN"] = ""
+
+    interpreter.chat("execute aws sts get-caller-identity")
+
+    interpreter.chat("execute pwd")
+
+
 def test_reset():
     # make sure that interpreter.reset() clears out the messages Array
     assert interpreter.messages == []
