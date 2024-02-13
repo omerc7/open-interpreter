@@ -196,7 +196,8 @@ class JupyterLanguage(BaseLanguage):
                 "thread is on:", self.listener_thread.is_alive(), self.listener_thread
             )
 
-        self.kc.execute(code)
+        print(f"running python code: {code}")
+        self.kc.execute(code, store_history=False)
 
     def detect_active_line(self, line):
         if "##active_line" in line:
