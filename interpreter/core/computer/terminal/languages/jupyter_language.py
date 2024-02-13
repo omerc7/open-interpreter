@@ -232,6 +232,7 @@ class JupyterLanguage(BaseLanguage):
         return preprocess_python(code)
 
     def _set_env_vars(self, new_env_vars):
+        return  # DISABLED
         code = ""
         code += "import os\n\n"
         for k, v in new_env_vars.items():
