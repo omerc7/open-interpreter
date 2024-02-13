@@ -42,14 +42,14 @@ class JupyterLanguage(BaseLanguage):
 
         # Use Agg, which bubbles everything up as an image.
         # Not perfect (I want interactive!) but it works.
-        backend = "Agg"
+        # backend = "Agg"
 
-        code = f"""
-        import matplotlib
-        matplotlib.use('{backend}')
-        """
-        for _ in self.run(code):
-            pass
+        # code = f"""
+        # import matplotlib
+        # matplotlib.use('{backend}')
+        # """
+        # for _ in self.run(code):
+        #     pass
 
         # DISABLED because it doesn't work??
         # Disable color outputs in the terminal, which don't look good in OI and aren't useful
