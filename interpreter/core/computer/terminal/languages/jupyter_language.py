@@ -4,6 +4,7 @@ Gotta split this out, generalize it, and move all the python additions to python
 """
 
 import ast
+import os
 import queue
 import re
 import threading
@@ -32,6 +33,8 @@ class JupyterLanguage(BaseLanguage):
 
         self.listener_thread = None
         self.finish_flag = False
+
+        self.env_vars = {}
 
         # DISABLED because sometimes this bypasses sending it up to us for some reason!
         # Give it our same matplotlib backend
@@ -64,6 +67,10 @@ class JupyterLanguage(BaseLanguage):
         # lel
         # exec(code)
         # return
+        current_env = os.environ.copy()
+        if self.env_vars != current_env:
+            self._set_env_vars(current_env)
+
         self.finish_flag = False
         try:
             try:
@@ -222,6 +229,18 @@ class JupyterLanguage(BaseLanguage):
 
     def preprocess_code(self, code):
         return preprocess_python(code)
+
+    def _set_env_vars(self, new_env_vars):
+        code = ""
+        code += "import os\n\n"
+        for k, v in new_env_vars.items():
+            code += f"os.environ['{k}'] = '{v}'\n"
+
+        try:
+            self._execute_code(code, queue.Queue())
+            self.env_vars = new_env_vars
+        except:
+            print("Error setting environment variables")
 
 
 def preprocess_python(code):

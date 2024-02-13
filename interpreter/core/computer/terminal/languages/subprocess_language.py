@@ -16,6 +16,7 @@ class SubprocessLanguage(BaseLanguage):
         self.verbose = False
         self.output_queue = queue.Queue()
         self.done = threading.Event()
+        self.env_vars = {}
 
     def detect_active_line(self, line):
         return None
@@ -47,6 +48,7 @@ class SubprocessLanguage(BaseLanguage):
 
         my_env = os.environ.copy()
         my_env["PYTHONIOENCODING"] = "utf-8"
+        self.env_vars = my_env
         self.process = subprocess.Popen(
             self.start_cmd,
             stdin=subprocess.PIPE,
@@ -76,9 +78,16 @@ class SubprocessLanguage(BaseLanguage):
 
         # Setup
         try:
+            is_new = False
             code = self.preprocess_code(code)
             if not self.process:
                 self.start_process()
+                is_new = True
+
+            current_env = os.environ.copy()
+            if not is_new and self.env_vars != current_env:
+                self.update_subprocess_env(current_env)
+
         except:
             yield {
                 "type": "console",
@@ -191,3 +200,23 @@ class SubprocessLanguage(BaseLanguage):
                     print("Stream closed while reading.")
             else:
                 raise e
+
+    def update_subprocess_env(self, current_env):
+        language = getattr(self, "name", None)
+
+        code = ""
+
+        if language == "Shell":
+            code_format = "export {key}='{value}'\n"
+
+        # TODO: Add support for other languages, right now will not refresh env vars during active session for other languages
+        else:
+            return
+
+        for key, value in current_env.items():
+            if key not in self.env_vars or self.env_vars[key] != value:
+                code += code_format.format(key=key, value=value)
+
+        self.process.stdin.write(code + "\n")
+        self.process.stdin.flush()
+        self.env_vars = current_env
