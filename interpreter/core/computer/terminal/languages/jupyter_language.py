@@ -15,7 +15,7 @@ from jupyter_client import KernelManager
 
 from ..base_language import BaseLanguage
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 
 class JupyterLanguage(BaseLanguage):
