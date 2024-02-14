@@ -23,7 +23,7 @@ class JupyterLanguage(BaseLanguage):
     name = "Python"
 
     def __init__(self):
-        self.km = KernelManager(kernel_name="python3")
+        self.km = KernelManager(kernel_name="omer")
         self.km.start_kernel()
         self.kc = self.km.client()
         self.kc.start_channels()
@@ -197,7 +197,7 @@ class JupyterLanguage(BaseLanguage):
             )
 
         print(f"running python code: {code}")
-        self.kc.execute(code, store_history=False)
+        self.kc.execute(code)
 
     def detect_active_line(self, line):
         if "##active_line" in line:
