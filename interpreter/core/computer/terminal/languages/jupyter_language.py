@@ -232,14 +232,17 @@ class JupyterLanguage(BaseLanguage):
         return preprocess_python(code)
 
     def _set_env_vars(self, new_env_vars):
-        return  # DISABLED
         code = ""
         code += "import os\n\n"
         for k, v in new_env_vars.items():
             code += f"os.environ['{k}'] = '{v}'\n"
 
         try:
+            message_queue = queue.Queue()
             self._execute_code(code, queue.Queue())
+            for _ in self._capture_output(message_queue):
+                pass
+
             self.env_vars = new_env_vars
         except:
             print("Error setting environment variables")
