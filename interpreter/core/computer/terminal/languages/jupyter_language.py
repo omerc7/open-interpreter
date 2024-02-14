@@ -17,13 +17,18 @@ from ..base_language import BaseLanguage
 
 DEBUG_MODE = True
 
+KERNEL_NAME = os.getenv("KERNEL_NAME", "python3")
+
 
 class JupyterLanguage(BaseLanguage):
     file_extension = "py"
     name = "Python"
 
     def __init__(self):
-        self.km = KernelManager(kernel_name="omer")
+        if DEBUG_MODE:
+            print(f"using kernel {KERNEL_NAME}")
+
+        self.km = KernelManager(kernel_name=KERNEL_NAME)
         self.km.start_kernel()
         self.kc = self.km.client()
         self.kc.start_channels()
