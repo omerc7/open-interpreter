@@ -41,10 +41,10 @@ def preprocess_shell(code):
     Add end of execution marker
     """
 
-    # Add commands that tell us what the active line is
-    # if it's multiline, just skip this. soon we should make it work with multiline
-    if not has_multiline_commands(code):
-        code = add_active_line_prints(code)
+    # # Add commands that tell us what the active line is
+    # # if it's multiline, just skip this. soon we should make it work with multiline
+    # if not has_multiline_commands(code):
+    #     code = add_active_line_prints(code)
 
     # Add end command (we'll be listening for this so we know when it ends)
     code += '\necho "##end_of_execution##"'
