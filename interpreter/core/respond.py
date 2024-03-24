@@ -51,6 +51,10 @@ def respond(interpreter):
             chunk_type = None
 
             for chunk in interpreter._llm(messages_for_llm):
+                if interpreter.should_stop is True:
+                    print("Stopping llm chunk reads.")
+                    break
+                
                 # Add chunk to the last message
                 interpreter.messages[-1] = merge_deltas(interpreter.messages[-1], chunk)
 
