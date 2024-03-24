@@ -17,11 +17,11 @@ def respond(interpreter):
     Responds until it decides not to run any more code or say anything else.
     """
 
-    interpreter.should_stop = False
+    interpreter.stop_flag = False
     last_unsupported_code = ""
 
     while True:
-        if interpreter.should_stop is True:
+        if interpreter.stop_flag is True:
             print("Stopping agent.")
             break
         system_message = interpreter.generate_system_message()
@@ -51,7 +51,7 @@ def respond(interpreter):
             chunk_type = None
 
             for chunk in interpreter._llm(messages_for_llm):
-                if interpreter.should_stop is True:
+                if interpreter.stop_flag is True:
                     print("Stopping llm chunk reads.")
                     break
                 
@@ -188,6 +188,10 @@ If LM Studio's local server is running, please try a language model with a diffe
                 # Yield each line, also append it to last messages' output
                 interpreter.messages[-1]["output"] = ""
                 for line in code_interpreter.run(code):
+                    if interpreter.stop_flag is True:
+                        print("Stopping code execution.")
+                        break
+
                     yield line
                     if "output" in line:
                         output = interpreter.messages[-1]["output"]

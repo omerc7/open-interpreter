@@ -22,7 +22,7 @@ class Interpreter:
 
     def __init__(self):
         # State
-        self.should_stop = False
+        self.stop_flag = False
         self.messages = []
         self._code_interpreters = {}
 
@@ -149,8 +149,10 @@ class Interpreter:
         yield from respond(self)
 
     def stop(self):
-        self.should_stop = True
+        self.stop_flag = True
         self.reset()
+        # reset sets stop_flag to False, so we need to set it back to True
+        self.stop_flag = True
 
     def reset(self):
         for code_interpreter in self._code_interpreters.values():
