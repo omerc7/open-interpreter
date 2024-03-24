@@ -22,6 +22,7 @@ class Interpreter:
 
     def __init__(self):
         # State
+        self.should_stop = False
         self.messages = []
         self._code_interpreters = {}
 
@@ -146,6 +147,10 @@ class Interpreter:
 
     def _respond(self):
         yield from respond(self)
+
+    def stop(self):
+        self.should_stop = True
+        self.reset()
 
     def reset(self):
         for code_interpreter in self._code_interpreters.values():

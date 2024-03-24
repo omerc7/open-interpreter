@@ -17,9 +17,13 @@ def respond(interpreter):
     Responds until it decides not to run any more code or say anything else.
     """
 
+    interpreter.should_stop = False
     last_unsupported_code = ""
 
     while True:
+        if interpreter.should_stop is True:
+            print("Stopping agent.")
+            break
         system_message = interpreter.generate_system_message()
 
         # Create message object
@@ -94,10 +98,7 @@ def respond(interpreter):
                 raise Exception(
                     f"{output}\n\nThere might be an issue with your API key(s).\n\nTo reset your API key (we'll use OPENAI_API_KEY for this example, but you may need to reset your ANTHROPIC_API_KEY, HUGGINGFACE_API_KEY, etc):\n        Mac/Linux: 'export OPENAI_API_KEY=your-key-here',\n        Windows: 'setx OPENAI_API_KEY your-key-here' then restart terminal.\n\n"
                 )
-            elif (
-                interpreter.local == False
-                and "access" in str(e).lower()
-            ):
+            elif interpreter.local == False and "access" in str(e).lower():
                 response = input(
                     f"  You do not have access to {interpreter.model}. Would you like to try gpt-3.5-turbo instead? (y/n)\n\n  "
                 )
@@ -110,7 +111,9 @@ def respond(interpreter):
                     interpreter.function_calling_llm = True
                     display_markdown_message(f"> Model set to `{interpreter.model}`")
                 else:
-                    raise Exception("\n\nYou will need to add a payment method and purchase credits for the OpenAI api billing page (different from ChatGPT) to use gpt-4\nLink: https://platform.openai.com/account/billing/overview")
+                    raise Exception(
+                        "\n\nYou will need to add a payment method and purchase credits for the OpenAI api billing page (different from ChatGPT) to use gpt-4\nLink: https://platform.openai.com/account/billing/overview"
+                    )
             elif interpreter.local:
                 raise Exception(
                     str(e)
@@ -149,9 +152,9 @@ If LM Studio's local server is running, please try a language model with a diffe
                     if language not in interpreter._code_interpreters:
                         # Create code interpreter
                         config = {"language": language, "vision": interpreter.vision}
-                        interpreter._code_interpreters[
-                            language
-                        ] = create_code_interpreter(config)
+                        interpreter._code_interpreters[language] = (
+                            create_code_interpreter(config)
+                        )
                     code_interpreter = interpreter._code_interpreters[language]
                 else:
                     # This still prints the code but don't allow code to run. Let's Open-Interpreter know through output message
